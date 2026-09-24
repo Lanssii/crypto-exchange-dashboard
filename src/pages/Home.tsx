@@ -2,6 +2,7 @@ import { useState } from "react";
 import { INITIAL_ASSETS } from "../data/mockData";
 import { AssetsTable } from "../components/dashboard/AssetsTable";
 import { MarketOverview } from "../components/dashboard/MarketOverview";
+import { CurrencyCalculator } from "../components/dashboard/CurrencyCalculator";
 import { useBinanceWebSocket } from "../hooks/useBinanceWebSocket";
 
 const STATUS_BADGE_CONFIG = {
@@ -28,14 +29,12 @@ const STATUS_BADGE_CONFIG = {
 };
 
 const Home = () => {
-  // Currently selected crypto symbol
   const [selectedSymbol, setSelectedSymbol] = useState("BTCUSDT");
 
   // Fetch real-time crypto prices & session history from Binance WebSocket
   const { assets, connectionStatus, priceHistory } =
     useBinanceWebSocket(INITIAL_ASSETS);
 
-  // Find object of the currently selected crypto pair
   const selectedAsset = assets.find((a) => a.symbol === selectedSymbol);
   const selectedHistory = priceHistory[selectedSymbol] || [];
 
@@ -55,7 +54,7 @@ const Home = () => {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-6 flex flex-col gap-6">
-      {/* Connection Indicator */}
+      {/* Connection Status */}
       <div className="flex items-center justify-between px-1">
         <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
           Dashboard
@@ -63,8 +62,11 @@ const Home = () => {
         <div>{renderConnectionBadge()}</div>
       </div>
 
-      {/* Price Chart */}
-      <MarketOverview asset={selectedAsset} history={selectedHistory} />
+      {/* Graph and Calculator */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-6 items-stretch">
+        <MarketOverview asset={selectedAsset} history={selectedHistory} />
+        <CurrencyCalculator assets={assets} />
+      </div>
 
       {/* Crypto Assets Table */}
       <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-2xl border border-gray-200 dark:border-gray-800">
