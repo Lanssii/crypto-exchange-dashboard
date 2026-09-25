@@ -4,6 +4,7 @@ import { AssetsTable } from "../components/dashboard/AssetsTable";
 import { MarketOverview } from "../components/dashboard/MarketOverview";
 import { CurrencyCalculator } from "../components/dashboard/CurrencyCalculator";
 import { useBinanceWebSocket } from "../hooks/useBinanceWebSocket";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const STATUS_BADGE_CONFIG = {
   CONNECTED: {
@@ -28,15 +29,40 @@ const STATUS_BADGE_CONFIG = {
   },
 };
 
-const Home = () => {
+type HomeProps = {
+  searchQuery?: string;
+};
+
+const Home = ({ searchQuery = "" }: HomeProps) => {
   const [selectedSymbol, setSelectedSymbol] = useState("BTCUSDT");
 
-  // Fetch real-time crypto prices & session history from Binance WebSocket
-  const { assets, connectionStatus, priceHistory } =
+  const [favorites, setFavorites] = useLocalStorage<string[]>(
+    "crypto_favorites",
+    []
+  );
+  const [hidden, setHidden] = useLocalStorage<string[]>("crypto_hidden", []);
+
+  const { assets, connectionStatus, initialPrices, priceHistory } =
     useBinanceWebSocket(CRYPTO_CONFIG);
 
   const selectedAsset = assets.find((a) => a.symbol === selectedSymbol);
   const selectedHistory = priceHistory[selectedSymbol] || [];
+
+  const handleToggleFavorite = (symbol: string) => {
+    setFavorites((prev) =>
+      prev.includes(symbol)
+        ? prev.filter((s) => s !== symbol)
+        : [...prev, symbol]
+    );
+  };
+
+  const handleToggleHide = (symbol: string) => {
+    setHidden((prev) =>
+      prev.includes(symbol)
+        ? prev.filter((s) => s !== symbol)
+        : [...prev, symbol]
+    );
+  };
 
   const renderConnectionBadge = () => {
     const config =
@@ -54,7 +80,7 @@ const Home = () => {
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-6 flex flex-col gap-6">
-      {/* Connection Status */}
+      {/* Status Bar */}
       <div className="flex items-center justify-between px-1">
         <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
           Dashboard
@@ -68,13 +94,18 @@ const Home = () => {
         <CurrencyCalculator assets={assets} />
       </div>
 
-      {/* Crypto Assets Table */}
+      {/* Assets Table */}
       <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-2xl border border-gray-200 dark:border-gray-800">
         <AssetsTable
           assets={assets}
           priceHistory={priceHistory}
           selectedSymbol={selectedSymbol}
+          searchQuery={searchQuery}
+          favorites={favorites}
+          hidden={hidden}
           onSelectSymbol={setSelectedSymbol}
+          onToggleFavorite={handleToggleFavorite}
+          onToggleHide={handleToggleHide}
         />
       </div>
     </main>

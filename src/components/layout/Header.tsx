@@ -5,9 +5,14 @@ import {
   IoSearchOutline,
 } from "react-icons/io5";
 
-const Header = () => {
+type HeaderProps = {
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+};
+
+const Header = ({ searchQuery, onSearchChange }: HeaderProps) => {
   return (
-    <header className="border-b border-gray-200 bg-white shadow-sm">
+    <header className="border-b border-gray-200 bg-white shadow-sm dark:bg-gray-900 dark:border-gray-800">
       <div className="max-w-7xl mx-auto w-full flex flex-wrap md:flex-nowrap items-center justify-between py-3 px-5 gap-y-3">
         {/* Logo */}
         <div>
@@ -16,8 +21,13 @@ const Header = () => {
               src="/images/logoIcon.svg"
               alt="KursiCrypto Logo"
               className="w-8 h-8 object-contain rounded-md"
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = "none";
+              }}
             />
-            <h1 className="text-xl font-bold text-gray-900">KursiCrypto</h1>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+              KursiCrypto
+            </h1>
           </Link>
         </div>
 
@@ -25,7 +35,7 @@ const Header = () => {
           {/* Notification Button */}
           <button
             type="button"
-            className="relative p-2 text-gray-600 hover:text-gray-900 focus:outline-none rounded-xl hover:bg-gray-100 transition-colors"
+            className="relative p-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white focus:outline-none rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label="Notifications"
           >
             <IoNotificationsOutline className="w-6 h-6" />
@@ -38,7 +48,7 @@ const Header = () => {
           {/* Theme Toggle Button */}
           <button
             type="button"
-            className="p-2 text-gray-600 hover:text-gray-900 focus:outline-none rounded-xl hover:bg-gray-100 transition-colors"
+            className="p-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white focus:outline-none rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label="Toggle Theme"
           >
             <IoMoonOutline className="w-6 h-6" />
@@ -58,7 +68,9 @@ const Header = () => {
             <input
               type="search"
               id="search"
-              className="block w-full p-2.5 ps-10 pr-4 bg-[#F0F2F4] text-gray-900 text-sm rounded-lg outline-none focus:border-[#592357] focus:ring-2 focus:ring-[#592357]/30 placeholder-gray-500 transition-colors"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="block w-full p-2.5 ps-10 pr-4 bg-[#F0F2F4] dark:bg-gray-800 text-gray-900 dark:text-white text-sm rounded-lg outline-none focus:border-[#592357] focus:ring-2 focus:ring-[#592357]/30 placeholder-gray-500 transition-colors"
               placeholder="Search..."
             />
           </div>

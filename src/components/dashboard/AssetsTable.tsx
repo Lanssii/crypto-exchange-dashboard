@@ -1,69 +1,155 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import type { CryptoAsset } from "../../types/crypto";
 import { AssetRow } from "./AssetRow";
+import { FiFilter } from "react-icons/fi";
+
+type SortOption = "name" | "price" | "change";
+type TabType = "all" | "favorites" | "hidden";
 
 type AssetsTableProps = {
   assets: CryptoAsset[];
   priceHistory?: Record<string, number[]>;
   selectedSymbol: string;
+  searchQuery: string;
+  favorites: string[];
+  hidden: string[];
   onSelectSymbol: (symbol: string) => void;
-  onToggleFavorite?: (symbol: string) => void;
-  onToggleHide?: (symbol: string) => void;
+  onToggleFavorite: (symbol: string) => void;
+  onToggleHide: (symbol: string) => void;
 };
 
 export const AssetsTable = ({
   assets,
   priceHistory = {},
   selectedSymbol,
+  searchQuery,
+  favorites,
+  hidden,
   onSelectSymbol,
   onToggleFavorite,
   onToggleHide,
 }: AssetsTableProps) => {
-  const [filter, setFilter] = useState<"all" | "favorites">("all");
+  const [activeTab, setActiveTab] = useState<TabType>("all");
+  const [sortBy, setSortBy] = useState<SortOption>("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  const displayedAssets =
-    filter === "favorites" ? assets.filter((a) => a.isFavorite) : assets;
+  // asset filtering and sorting
+  const processedAssets = useMemo(() => {
+    return assets
+      .map((asset) => ({
+        ...asset,
+        isFavorite: favorites.includes(asset.symbol),
+        isHidden: hidden.includes(asset.symbol),
+      }))
+      .filter((asset) => {
+        // Tab Filtering Logic
+        if (activeTab === "hidden") {
+          if (!asset.isHidden) return false;
+        } else {
+          if (asset.isHidden) return false; // Exclude hidden from All & Favorites
+          if (activeTab === "favorites" && !asset.isFavorite) return false;
+        }
+
+        // Global Search Filter
+        if (searchQuery.trim() !== "") {
+          const q = searchQuery.toLowerCase().trim();
+          const matchName = asset.name.toLowerCase().includes(q);
+          const matchSymbol = asset.symbol.toLowerCase().includes(q);
+          const matchBase = asset.baseAsset.toLowerCase().includes(q);
+
+          // Match numerical price string
+          const priceStr = asset.price !== null ? asset.price.toString() : "";
+          const matchPrice = priceStr.includes(q);
+
+          return matchName || matchSymbol || matchBase || matchPrice;
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        const modifier = sortOrder === "asc" ? 1 : -1;
+        if (sortBy === "name") {
+          return a.name.localeCompare(b.name) * modifier;
+        }
+        if (sortBy === "price") {
+          return ((a.price ?? 0) - (b.price ?? 0)) * modifier;
+        }
+        if (sortBy === "change") {
+          return ((a.change24h ?? 0) - (b.change24h ?? 0)) * modifier;
+        }
+        return 0;
+      });
+  }, [assets, favorites, hidden, activeTab, searchQuery, sortBy, sortOrder]);
 
   return (
-    <div className="w-full flex flex-col gap-3 sm:gap-4">
-      {/* Filters */}
-      <div className="flex items-center justify-between px-1">
-        <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
-          Assets
-        </h3>
-
+    <div className="w-full flex flex-col gap-4">
+      {/* Tabs and Sort Dropdown */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-1">
         <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm font-medium">
           <button
-            onClick={() => setFilter("all")}
+            onClick={() => setActiveTab("all")}
             className={`transition-colors ${
-              filter === "all"
-                ? "text-gray-900 font-bold dark:text-white border-b-2 border-[#2D122C] pb-0.5"
+              activeTab === "all"
+                ? "text-gray-900 font-bold dark:text-white border-b-2 border-[#592357] dark:border-purple-400 pb-0.5"
                 : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             }`}
           >
             All
           </button>
+
           <button
-            onClick={() => setFilter("favorites")}
+            onClick={() => setActiveTab("favorites")}
             className={`transition-colors ${
-              filter === "favorites"
-                ? "text-gray-900 font-bold dark:text-white border-b-2 border-[#2D122C] pb-0.5"
+              activeTab === "favorites"
+                ? "text-gray-900 font-bold dark:text-white border-b-2 border-[#592357] dark:border-purple-400 pb-0.5"
                 : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             }`}
           >
-            Favorites
+            Favorites ({favorites.length})
           </button>
 
-          <button className="text-[#2D122C] dark:text-purple-300 hover:underline text-[11px] sm:text-xs">
-            See all
+          <button
+            onClick={() => setActiveTab("hidden")}
+            className={`transition-colors ${
+              activeTab === "hidden"
+                ? "text-gray-900 font-bold dark:text-white border-b-2 border-[#592357] dark:border-purple-400 pb-0.5"
+                : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            }`}
+          >
+            Hidden ({hidden.length})
+          </button>
+        </div>
+
+        {/* Sorting Dropdown */}
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-800 text-xs text-gray-500 font-medium">
+            <FiFilter className="text-gray-400" />
+            <span>Sort:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortOption)}
+              className="bg-transparent font-bold text-gray-800 dark:text-gray-200 outline-none cursor-pointer"
+            >
+              <option value="name">Name</option>
+              <option value="price">Price</option>
+              <option value="change">24h Change</option>
+            </select>
+          </div>
+
+          <button
+            onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+            className="px-2.5 py-1.5 rounded-xl border border-gray-200 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-800 text-xs font-mono font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            title="Toggle Sort Direction"
+          >
+            {sortOrder === "asc" ? "↑ ASC" : "↓ DESC"}
           </button>
         </div>
       </div>
 
-      {/* List */}
+      {/* Rendered Asset Rows */}
       <div className="flex flex-col gap-1.5 sm:gap-2">
-        {displayedAssets.length > 0 ? (
-          displayedAssets.map((asset) => (
+        {processedAssets.length > 0 ? (
+          processedAssets.map((asset) => (
             <AssetRow
               key={asset.symbol}
               asset={asset}
@@ -75,8 +161,14 @@ export const AssetsTable = ({
             />
           ))
         ) : (
-          <div className="text-center py-8 text-gray-400 text-xs sm:text-sm">
-            No assets found in Favorites
+          <div className="text-center py-8 text-gray-400 text-xs sm:text-sm border border-dashed border-gray-200 dark:border-gray-800 rounded-xl">
+            {activeTab === "hidden"
+              ? "No hidden currencies"
+              : activeTab === "favorites"
+              ? "No favorite currencies selected yet"
+              : searchQuery
+              ? `No currencies found matching "${searchQuery}"`
+              : "No assets available"}
           </div>
         )}
       </div>
