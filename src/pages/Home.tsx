@@ -3,6 +3,7 @@ import { CRYPTO_CONFIG } from "../data/cryptoConfig.ts";
 import { AssetsTable } from "../components/dashboard/AssetsTable";
 import { MarketOverview } from "../components/dashboard/MarketOverview";
 import { CurrencyCalculator } from "../components/dashboard/CurrencyCalculator";
+import { PriceAlerts } from "../components/dashboard/PriceAlerts";
 import { useBinanceWebSocket } from "../hooks/useBinanceWebSocket";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
@@ -87,6 +88,9 @@ const Home = ({ searchQuery = "" }: HomeProps) => {
         </h1>
         <div>{renderConnectionBadge()}</div>
       </div>
+
+      {/* 2% Price Alerts Container */}
+      <PriceAlerts assets={assets} initialPrices={initialPrices} />
 
       {/* Graph and Calculator */}
       <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-6 items-stretch">
