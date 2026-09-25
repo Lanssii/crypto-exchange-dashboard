@@ -32,9 +32,10 @@ const STATUS_BADGE_CONFIG = {
 
 type HomeProps = {
   searchQuery?: string;
+  onAddNotification?: (item: any) => void;
 };
 
-const Home = ({ searchQuery = "" }: HomeProps) => {
+const Home = ({ searchQuery = "", onAddNotification }: HomeProps) => {
   const [selectedSymbol, setSelectedSymbol] = useState("BTCUSDT");
 
   const [favorites, setFavorites] = useLocalStorage<string[]>(
@@ -90,7 +91,11 @@ const Home = ({ searchQuery = "" }: HomeProps) => {
       </div>
 
       {/* 2% Price Alerts Container */}
-      <PriceAlerts assets={assets} initialPrices={initialPrices} />
+      <PriceAlerts
+        assets={assets}
+        initialPrices={initialPrices}
+        onAddNotification={onAddNotification}
+      />
 
       {/* Graph and Calculator */}
       <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-6 items-stretch">

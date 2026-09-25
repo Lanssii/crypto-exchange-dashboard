@@ -12,6 +12,13 @@ type AlertMessage = {
 type PriceAlertsProps = {
   assets: CryptoAsset[];
   initialPrices: Record<string, number>;
+  onAddNotification?: (item: {
+    id: string;
+    symbol: string;
+    percentChange: number;
+    direction: "increased" | "decreased";
+    time: string;
+  }) => void;
 };
 
 const ToastItem = ({
@@ -80,12 +87,24 @@ const ToastItem = ({
   );
 };
 
-export const PriceAlerts = ({ assets, initialPrices }: PriceAlertsProps) => {
+export const PriceAlerts = ({
+  assets,
+  initialPrices,
+  onAddNotification,
+}: PriceAlertsProps) => {
   const [alerts, setAlerts] = useState<AlertMessage[]>([]);
   const triggeredAlertsRef = useRef<Record<string, boolean>>({});
 
   const pushAlert = (newAlert: AlertMessage) => {
     setAlerts((prev) => [newAlert, ...prev.slice(0, 3)]);
+
+    onAddNotification?.({
+      ...newAlert,
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    });
   };
 
   useEffect(() => {
@@ -146,7 +165,7 @@ export const PriceAlerts = ({ assets, initialPrices }: PriceAlertsProps) => {
   return (
     <>
       {/* 
-         DEMO BUTTON 
+          DEMO BUTTON 
       */}
 
       {/* <div className="flex justify-end mb-2">
