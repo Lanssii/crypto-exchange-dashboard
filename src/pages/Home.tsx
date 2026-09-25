@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { INITIAL_ASSETS } from "../data/mockData";
+import { CRYPTO_CONFIG } from "../data/cryptoConfig.ts";
 import { AssetsTable } from "../components/dashboard/AssetsTable";
 import { MarketOverview } from "../components/dashboard/MarketOverview";
 import { CurrencyCalculator } from "../components/dashboard/CurrencyCalculator";
@@ -33,7 +33,7 @@ const Home = () => {
 
   // Fetch real-time crypto prices & session history from Binance WebSocket
   const { assets, connectionStatus, priceHistory } =
-    useBinanceWebSocket(INITIAL_ASSETS);
+    useBinanceWebSocket(CRYPTO_CONFIG);
 
   const selectedAsset = assets.find((a) => a.symbol === selectedSymbol);
   const selectedHistory = priceHistory[selectedSymbol] || [];
@@ -72,6 +72,7 @@ const Home = () => {
       <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-2xl border border-gray-200 dark:border-gray-800">
         <AssetsTable
           assets={assets}
+          priceHistory={priceHistory}
           selectedSymbol={selectedSymbol}
           onSelectSymbol={setSelectedSymbol}
         />

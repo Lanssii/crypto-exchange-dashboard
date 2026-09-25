@@ -4,14 +4,20 @@ import { AssetRow } from "./AssetRow";
 
 type AssetsTableProps = {
   assets: CryptoAsset[];
+  priceHistory?: Record<string, number[]>;
   selectedSymbol: string;
   onSelectSymbol: (symbol: string) => void;
+  onToggleFavorite?: (symbol: string) => void;
+  onToggleHide?: (symbol: string) => void;
 };
 
 export const AssetsTable = ({
   assets,
+  priceHistory = {},
   selectedSymbol,
   onSelectSymbol,
+  onToggleFavorite,
+  onToggleHide,
 }: AssetsTableProps) => {
   const [filter, setFilter] = useState<"all" | "favorites">("all");
 
@@ -61,8 +67,11 @@ export const AssetsTable = ({
             <AssetRow
               key={asset.symbol}
               asset={asset}
+              history={priceHistory[asset.symbol] || []}
               isSelected={asset.symbol === selectedSymbol}
               onSelect={onSelectSymbol}
+              onToggleFavorite={onToggleFavorite}
+              onToggleHide={onToggleHide}
             />
           ))
         ) : (

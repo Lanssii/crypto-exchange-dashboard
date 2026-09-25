@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import type { CryptoAsset } from "../types/crypto";
+import type { CryptoAsset, PriceDirection } from "../types/crypto";
 
 export type ConnectionStatus =
   | "CONNECTED"
@@ -21,13 +21,13 @@ export const useBinanceWebSocket = (
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatus>("DISCONNECTED");
 
-  // Save the initial price of the session (first price received for each asset)
+  // Save the initial price of the session (first price received)
   const initialPricesRef = useRef<Record<string, number>>({});
   const [initialPrices, setInitialPrices] = useState<Record<string, number>>(
     {}
   );
 
-  // Store price history in ref to avoid data loss on high-frequency WebSocket updates
+  // Store price history in ref to avoid data loss on high-frequency updates
   const priceHistoryRef = useRef<Record<string, number[]>>({});
   const [priceHistory, setPriceHistory] = useState<Record<string, number[]>>(
     {}
@@ -40,7 +40,6 @@ export const useBinanceWebSocket = (
     let isMounted = true;
 
     const connect = () => {
-      // Build streams string for specified symbols
       const streams = initialAssets
         .map((a) => `${a.symbol.toLowerCase()}@ticker`)
         .join("/");
@@ -70,28 +69,37 @@ export const useBinanceWebSocket = (
 
           if (!symbol || isNaN(currentPrice)) return;
 
-          // Record first price of the session (if not saved yet)
-          if (!initialPricesRef.current[symbol]) {
+          // Record first price of the session
+          if (!(symbol in initialPricesRef.current)) {
             initialPricesRef.current[symbol] = currentPrice;
             setInitialPrices((prev) => ({ ...prev, [symbol]: currentPrice }));
           }
 
-          // Atomically update history in ref to prevent state race conditions
+          // Atomically update history in ref
           const currentHistory = priceHistoryRef.current[symbol] || [];
           const updatedHistory = [...currentHistory, currentPrice].slice(-20);
           priceHistoryRef.current[symbol] = updatedHistory;
 
-          // Push history snapshot to state to trigger UI render
           setPriceHistory({ ...priceHistoryRef.current });
 
-          // Update assets list with fresh WebSocket prices
+          // Calculate instant price direction (Comparing with previous tick)
           setAssets((prevAssets) =>
             prevAssets.map((asset) => {
               if (asset.symbol === symbol) {
+                const prevPrice = asset.price;
+                let direction: PriceDirection = "neutral";
+
+                if (prevPrice !== null) {
+                  if (currentPrice > prevPrice) direction = "up";
+                  else if (currentPrice < prevPrice) direction = "down";
+                  else direction = asset.priceDirection || "neutral";
+                }
+
                 return {
                   ...asset,
                   price: currentPrice,
                   change24h: change24h,
+                  priceDirection: direction,
                 };
               }
               return asset;

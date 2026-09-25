@@ -14,16 +14,18 @@ type MarketOverviewProps = {
   history: number[];
 };
 
-const formatPrice = (price: number) =>
-  price.toLocaleString(undefined, {
+const formatPrice = (price: number | null | undefined) => {
+  if (price === null || price === undefined || isNaN(price)) return "--";
+  return price.toLocaleString(undefined, {
     minimumFractionDigits: price < 1 ? 4 : 2,
     maximumFractionDigits: 8,
   });
+};
 
 export const MarketOverview = ({ asset, history }: MarketOverviewProps) => {
   if (!asset) return null;
 
-  const isPositive = asset.change24h >= 0;
+  const isPositive = (asset.change24h ?? 0) >= 0;
   const strokeColor = isPositive ? "#22c55e" : "#ef4444";
   const gradientId = `price-gradient-${asset.symbol}`;
 
@@ -32,6 +34,7 @@ export const MarketOverview = ({ asset, history }: MarketOverviewProps) => {
     price,
   }));
 
+  // Fallback to null if history is empty and price is not loaded yet
   const sessionHigh = history.length ? Math.max(...history) : asset.price;
 
   const sessionLow = history.length ? Math.min(...history) : asset.price;
@@ -39,10 +42,21 @@ export const MarketOverview = ({ asset, history }: MarketOverviewProps) => {
   return (
     <section className="w-full rounded-2xl border border-gray-200 bg-white p-5 shadow-xs dark:border-gray-800 dark:bg-gray-900 sm:p-6">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        {/* Asset info */}
+        {/* Asset Info */}
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 text-base font-bold text-gray-800 dark:bg-gray-800 dark:text-gray-100">
-            {asset.baseAsset.slice(0, 3)}
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 dark:bg-gray-800 font-bold text-base text-gray-800 dark:text-gray-100 overflow-hidden p-1.5">
+            {asset.icon ? (
+              <img
+                src={asset.icon}
+                alt={asset.name}
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  (e.target as HTMLElement).style.display = "none";
+                }}
+              />
+            ) : (
+              asset.baseAsset.slice(0, 3)
+            )}
           </div>
 
           <div>
@@ -57,7 +71,7 @@ export const MarketOverview = ({ asset, history }: MarketOverviewProps) => {
             </div>
 
             <p className="mt-0.5 text-xs font-medium text-gray-400">
-              Real-time Session
+              Real-time Session Volatility
             </p>
           </div>
         </div>
@@ -86,17 +100,25 @@ export const MarketOverview = ({ asset, history }: MarketOverviewProps) => {
 
           <div>
             <div className="font-mono text-2xl font-black tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl">
-              ${formatPrice(asset.price)}
+              {asset.price !== null ? (
+                `$${formatPrice(asset.price)}`
+              ) : (
+                <span className="text-gray-400 font-normal text-lg animate-pulse">
+                  Loading...
+                </span>
+              )}
             </div>
 
-            <div
-              className={`inline-flex items-center gap-1 font-mono text-xs font-bold ${
-                isPositive ? "text-green-500" : "text-red-500"
-              }`}
-            >
-              <span>{isPositive ? "↗ +" : "↘ "}</span>
-              <span>{asset.change24h}%</span>
-            </div>
+            {asset.change24h !== null && (
+              <div
+                className={`inline-flex items-center gap-1 font-mono text-xs font-bold ${
+                  isPositive ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                <span>{isPositive ? "↗ +" : "↘ "}</span>
+                <span>{asset.change24h}%</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -139,7 +161,7 @@ export const MarketOverview = ({ asset, history }: MarketOverviewProps) => {
                   fill: "#9ca3af",
                   fontFamily: "monospace",
                 }}
-                tickFormatter={formatPrice}
+                tickFormatter={(val) => `$${formatPrice(Number(val))}`}
               />
 
               <Tooltip
