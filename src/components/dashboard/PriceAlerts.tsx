@@ -32,19 +32,11 @@ const ToastItem = ({
 
   useEffect(() => {
     // entry animation
-    const showTimer = requestAnimationFrame(() => {
-      setIsVisible(true);
-    });
-
+    const showTimer = requestAnimationFrame(() => setIsVisible(true));
     // exit animation at 4.6s
-    const hideTimer = setTimeout(() => {
-      setIsVisible(false);
-    }, 4600);
-
+    const hideTimer = setTimeout(() => setIsVisible(false), 4600);
     // Unmount from state at 5s
-    const dismissTimer = setTimeout(() => {
-      onDismiss(alert.id);
-    }, 5000);
+    const dismissTimer = setTimeout(() => onDismiss(alert.id), 5000);
 
     return () => {
       cancelAnimationFrame(showTimer);
@@ -62,23 +54,32 @@ const ToastItem = ({
 
   return (
     <div
-      style={{
-        backgroundColor: isGreen ? "#23C552" : "#FF0F0F",
-      }}
-      className={`pointer-events-auto p-3.5 rounded-xl shadow-xl border border-white/20 flex items-center justify-between gap-3 text-xs sm:text-sm font-medium text-white transition-all duration-300 ease-out transform ${
+      className={`pointer-events-auto p-3.5 sm:p-4 rounded-xl shadow-lg bg-white dark:bg-gray-900 border-2 transition-all duration-300 ease-out transform flex items-center justify-between gap-3 text-xs sm:text-sm text-gray-900 dark:text-gray-100 ${
+        isGreen ? "border-emerald-500" : "border-rose-500"
+      } ${
         isVisible
           ? "opacity-100 translate-x-0 scale-100"
           : "opacity-0 translate-x-8 scale-95"
       }`}
     >
-      <span>
+      <div className="font-medium">
         <strong className="font-bold">{alert.symbol}</strong> {alert.direction}{" "}
-        by {alert.percentChange}% since you opened the page.
-      </span>
+        by{" "}
+        <span
+          className={`font-mono font-bold ${
+            isGreen
+              ? "text-emerald-600 dark:text-emerald-400"
+              : "text-rose-600 dark:text-rose-400"
+          }`}
+        >
+          {alert.percentChange}%
+        </span>{" "}
+        since session start.
+      </div>
 
       <button
         onClick={handleManualClose}
-        className="text-white/80 hover:text-white p-1 transition-colors cursor-pointer flex-shrink-0"
+        className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 transition-colors cursor-pointer flex-shrink-0"
         title="Close"
       >
         <IoClose className="w-4 h-4" />
@@ -147,7 +148,6 @@ export const PriceAlerts = ({
   /* UNCOMMENT THESE PARTS TO SEE HOW THESE NOTIFICATIONS WORK
      Not to wait untill 2% changes, for technical interview Demo
   */
-
   /* const triggerMockAlert = () => {
     const isUp = Math.random() > 0.5;
     const mockPercent = parseFloat((2.15 + Math.random() * 1.2).toFixed(2));
@@ -165,9 +165,8 @@ export const PriceAlerts = ({
   return (
     <>
       {/* 
-          DEMO BUTTON 
-      */}
-
+      DEMO BUTTON
+       */}
       {/* <div className="flex justify-end mb-2">
         <button
           onClick={triggerMockAlert}

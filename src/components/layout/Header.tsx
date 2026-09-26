@@ -33,7 +33,7 @@ const Header = ({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Dropdown closing
+  // Dropdown closing on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -86,7 +86,7 @@ const Header = ({
             >
               <IoNotificationsOutline className="w-6 h-6" />
               {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white animate-pulse">
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
@@ -102,7 +102,7 @@ const Header = ({
                   {notifications.length > 0 && (
                     <button
                       onClick={onClearNotifications}
-                      className="text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1 cursor-pointer"
+                      className="text-gray-400 hover:text-rose-500 transition-colors flex items-center gap-1 cursor-pointer"
                       title="Clear log"
                     >
                       <IoTrashOutline />
@@ -113,24 +113,41 @@ const Header = ({
 
                 <div className="flex flex-col gap-2 max-h-60 overflow-y-auto">
                   {notifications.length > 0 ? (
-                    notifications.map((item) => (
-                      <div
-                        key={item.id}
-                        className="p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800 flex items-center justify-between gap-2"
-                      >
-                        <div className="flex flex-col">
-                          <span className="font-bold text-gray-900 dark:text-gray-100">
-                            {item.symbol}
-                          </span>
-                          <span className="text-[11px] text-gray-500 dark:text-gray-400">
-                            {item.direction} by {item.percentChange}%
+                    notifications.map((item) => {
+                      const isUp = item.direction === "increased";
+
+                      return (
+                        <div
+                          key={item.id}
+                          className={`p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800/50 border-y border-r border-gray-100 dark:border-gray-800 flex items-center justify-between gap-2 border-l-2 ${
+                            isUp ? "border-l-emerald-500" : "border-l-rose-500"
+                          }`}
+                        >
+                          <div className="flex flex-col gap-0.5">
+                            <span className="font-bold text-gray-900 dark:text-gray-100">
+                              {item.symbol}
+                            </span>
+                            <span className="text-[11px] text-gray-500 dark:text-gray-400">
+                              {item.direction} by{" "}
+                              <strong
+                                className={`font-mono font-bold ${
+                                  isUp
+                                    ? "text-emerald-600 dark:text-emerald-400"
+                                    : "text-rose-600 dark:text-rose-400"
+                                }`}
+                              >
+                                {isUp ? "+" : "-"}
+                                {item.percentChange}%
+                              </strong>
+                            </span>
+                          </div>
+
+                          <span className="text-[10px] font-mono text-gray-400 flex-shrink-0">
+                            {item.time}
                           </span>
                         </div>
-                        <span className="text-[10px] font-mono text-gray-400">
-                          {item.time}
-                        </span>
-                      </div>
-                    ))
+                      );
+                    })
                   ) : (
                     <div className="text-center py-6 text-gray-400">
                       No 2% price alerts logged yet
@@ -144,7 +161,7 @@ const Header = ({
           {/* Theme Toggle Button */}
           <button
             type="button"
-            className="p-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white focus:outline-none rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="p-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white focus:outline-none rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
             aria-label="Toggle Theme"
             onClick={themeToggle}
             title={
@@ -159,7 +176,7 @@ const Header = ({
           </button>
         </div>
 
-        {/* Search */}
+        {/* Search Input */}
         <div className="w-full order-3 md:order-2 md:max-w-xs lg:max-w-md">
           <label htmlFor="search" className="sr-only">
             Search
