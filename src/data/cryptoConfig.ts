@@ -1,18 +1,12 @@
 import type { CryptoAsset } from "../types/crypto";
 
-import btcIcon from "../../public/images/BTC.svg";
-import ethIcon from "../../public/images/ETH.svg";
-import solIcon from "../../public/images/SOL.svg";
-import bnbIcon from "../../public/images/BNB.svg";
-import xrpIcon from "../../public/images/XRP.svg";
-
 export const CRYPTO_CONFIG: CryptoAsset[] = [
   {
     symbol: "BTCUSDT",
     baseAsset: "BTC",
     quoteAsset: "USDT",
     name: "Bitcoin",
-    icon: btcIcon,
+    icon: "/images/BTC.svg",
     price: null,
     change24h: null,
     priceDirection: "neutral",
@@ -22,7 +16,7 @@ export const CRYPTO_CONFIG: CryptoAsset[] = [
     baseAsset: "ETH",
     quoteAsset: "USDT",
     name: "Ethereum",
-    icon: ethIcon,
+    icon: "/images/ETH.svg",
     price: null,
     change24h: null,
     priceDirection: "neutral",
@@ -32,7 +26,7 @@ export const CRYPTO_CONFIG: CryptoAsset[] = [
     baseAsset: "SOL",
     quoteAsset: "USDT",
     name: "Solana",
-    icon: solIcon,
+    icon: "/images/SOL.svg",
     price: null,
     change24h: null,
     priceDirection: "neutral",
@@ -42,7 +36,7 @@ export const CRYPTO_CONFIG: CryptoAsset[] = [
     baseAsset: "BNB",
     quoteAsset: "USDT",
     name: "BNB",
-    icon: bnbIcon,
+    icon: "/images/BNB.svg",
     price: null,
     change24h: null,
     priceDirection: "neutral",
@@ -52,7 +46,7 @@ export const CRYPTO_CONFIG: CryptoAsset[] = [
     baseAsset: "XRP",
     quoteAsset: "USDT",
     name: "XRP",
-    icon: xrpIcon,
+    icon: "/images/XRP.svg",
     price: null,
     change24h: null,
     priceDirection: "neutral",

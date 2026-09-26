@@ -1,10 +1,11 @@
-import { CRYPTO_CONFIG } from "../data/cryptoConfig.ts";
+import { CRYPTO_CONFIG } from "../data/cryptoConfig";
 import { AssetsTable } from "../components/dashboard/AssetsTable";
 import { MarketOverview } from "../components/dashboard/MarketOverview";
 import { CurrencyCalculator } from "../components/dashboard/CurrencyCalculator";
 import { PriceAlerts } from "../components/dashboard/PriceAlerts";
 import { useBinanceWebSocket } from "../hooks/useBinanceWebSocket";
 import { useLocalStorage } from "../hooks/useLocalStorage";
+import type { NotificationItem } from "../App";
 
 const STATUS_BADGE_CONFIG = {
   CONNECTED: {
@@ -33,7 +34,7 @@ type HomeProps = {
   searchQuery?: string;
   selectedSymbol: string;
   onSelectSymbol: (symbol: string) => void;
-  onAddNotification?: (item: any) => void;
+  onAddNotification?: (item: NotificationItem) => void;
 };
 
 const Home = ({
