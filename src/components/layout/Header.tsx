@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   IoNotificationsOutline,
+  IoSunnyOutline,
   IoMoonOutline,
   IoSearchOutline,
   IoTrashOutline,
@@ -15,6 +16,8 @@ type HeaderProps = {
   unreadCount: number;
   onClearNotifications: () => void;
   onOpenNotifications: () => void;
+  theme: "light" | "dark";
+  themeToggle: () => void;
 };
 
 const Header = ({
@@ -24,6 +27,8 @@ const Header = ({
   unreadCount,
   onClearNotifications,
   onOpenNotifications,
+  theme,
+  themeToggle,
 }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -141,8 +146,16 @@ const Header = ({
             type="button"
             className="p-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white focus:outline-none rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             aria-label="Toggle Theme"
+            onClick={themeToggle}
+            title={
+              theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"
+            }
           >
-            <IoMoonOutline className="w-6 h-6" />
+            {theme === "dark" ? (
+              <IoSunnyOutline className="w-6 h-6 text-amber-400" />
+            ) : (
+              <IoMoonOutline className="w-6 h-6" />
+            )}
           </button>
         </div>
 

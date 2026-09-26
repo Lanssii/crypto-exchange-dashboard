@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Header from "./components/layout/Header";
 import { CRYPTO_CONFIG } from "./data/cryptoConfig.ts";
+import { useLocalStorage } from "./hooks/useLocalStorage.ts";
 
 export type NotificationItem = {
   id: string;
@@ -18,6 +19,25 @@ const App = () => {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  // changing theme
+  const [theme, setTheme] = useLocalStorage<"light" | "dark">(
+    "app_theme",
+    "light"
+  );
+
+  useEffect(() => {
+    const root = window.document.documentElement; // <html> tag
+
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+  }, [theme]);
+
+  const themeToggle = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  };
   // show graph for searched coin
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
@@ -60,6 +80,8 @@ const App = () => {
         unreadCount={unreadCount}
         onClearNotifications={handleClearNotifications}
         onOpenNotifications={handleOpenNotifications}
+        themeToggle={themeToggle}
+        theme={theme}
       />
       <Routes>
         <Route
