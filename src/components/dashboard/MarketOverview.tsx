@@ -33,11 +33,16 @@ export const MarketOverview = ({ asset, history }: MarketOverviewProps) => {
     timeLabel: `Tick ${index + 1}`,
     price,
   }));
-
-  // Fallback to null if history is empty and price is not loaded yet
+  // Fallback to null if history is empty and price is not loaded yetы
   const sessionHigh = history.length ? Math.max(...history) : asset.price;
-
   const sessionLow = history.length ? Math.min(...history) : asset.price;
+
+  const minVal = history.length ? Math.min(...history) : asset.price ?? 0;
+  const maxVal = history.length ? Math.max(...history) : asset.price ?? 0;
+  const diff = maxVal - minVal;
+  const margin = diff > 0 ? diff * 0.25 : minVal * 0.003;
+
+  const yDomain = [Math.max(0, minVal - margin), maxVal + margin];
 
   return (
     <section className="w-full rounded-2xl border border-gray-200 bg-white p-5 shadow-xs dark:border-gray-800 dark:bg-gray-900 sm:p-6">
@@ -151,7 +156,7 @@ export const MarketOverview = ({ asset, history }: MarketOverviewProps) => {
               <XAxis dataKey="timeLabel" hide />
 
               <YAxis
-                domain={["dataMin - 0.5", "dataMax + 0.5"]}
+                domain={yDomain}
                 orientation="right"
                 tickCount={5}
                 axisLine={false}
@@ -194,12 +199,12 @@ export const MarketOverview = ({ asset, history }: MarketOverviewProps) => {
                 type="monotone"
                 dataKey="price"
                 stroke={strokeColor}
-                strokeWidth={3}
+                strokeWidth={2.5}
                 fill={`url(#${gradientId})`}
                 fillOpacity={1}
                 isAnimationActive={false}
                 activeDot={{
-                  r: 6,
+                  r: 5,
                   fill: strokeColor,
                   stroke: "#ffffff",
                   strokeWidth: 2,
