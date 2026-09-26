@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { CRYPTO_CONFIG } from "../data/cryptoConfig.ts";
 import { AssetsTable } from "../components/dashboard/AssetsTable";
 import { MarketOverview } from "../components/dashboard/MarketOverview";
@@ -32,12 +31,17 @@ const STATUS_BADGE_CONFIG = {
 
 type HomeProps = {
   searchQuery?: string;
+  selectedSymbol: string;
+  onSelectSymbol: (symbol: string) => void;
   onAddNotification?: (item: any) => void;
 };
 
-const Home = ({ searchQuery = "", onAddNotification }: HomeProps) => {
-  const [selectedSymbol, setSelectedSymbol] = useState("BTCUSDT");
-
+const Home = ({
+  searchQuery = "",
+  selectedSymbol,
+  onSelectSymbol,
+  onAddNotification,
+}: HomeProps) => {
   const [favorites, setFavorites] = useLocalStorage<string[]>(
     "crypto_favorites",
     []
@@ -112,7 +116,7 @@ const Home = ({ searchQuery = "", onAddNotification }: HomeProps) => {
           searchQuery={searchQuery}
           favorites={favorites}
           hidden={hidden}
-          onSelectSymbol={setSelectedSymbol}
+          onSelectSymbol={onSelectSymbol}
           onToggleFavorite={handleToggleFavorite}
           onToggleHide={handleToggleHide}
         />
