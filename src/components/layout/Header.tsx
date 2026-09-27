@@ -111,7 +111,7 @@ const Header = ({
                   )}
                 </div>
 
-                <div className="flex flex-col gap-2 max-h-60 overflow-y-auto">
+                <div className="flex flex-col gap-2 max-h-60 overflow-y-auto custom-scrollbar pr-1">
                   {notifications.length > 0 ? (
                     notifications.map((item) => {
                       const isUp = item.direction === "increased";
