@@ -1,9 +1,18 @@
 @import "tailwindcss";
 
-@layer base {
-  body {
-    @apply bg-[#F0F2F4];
-  }
+@theme {
+  /* Primary Colors */
+  --color-brand: #592357;
+  --color-brand-hover: #431a42;
+  --color-brand-light: rgba(89, 35, 87, 0.08);
+  --color-brand-dark: #2d122c;
+
+  /* Inputs and Neutral Backgrounds */
+  --color-input-bg-light: #f0f2f4;
 }
 
 @variant dark (&:where(.dark, .dark *));
+
+body {
+  @apply bg-gray-50 text-gray-900 font-sans transition-colors duration-200 dark:bg-gray-950 dark:text-gray-100;
+}

@@ -191,7 +191,7 @@ const Header = ({
               id="search"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="block w-full p-2.5 ps-10 pr-4 bg-[#F0F2F4] dark:bg-gray-800 text-gray-900 dark:text-white text-sm rounded-lg outline-none focus:border-[#592357] focus:ring-2 focus:ring-[#592357]/30 placeholder-gray-500 transition-colors"
+              className="block w-full p-2.5 ps-10 pr-4 bg-input-bg-light dark:bg-gray-800 text-gray-900 dark:text-white text-sm rounded-lg outline-none focus:border-brand focus:ring-2 focus:ring-brand/30 placeholder-gray-500 transition-colors"
               placeholder="Search by name, symbol, or price..."
             />
           </div>

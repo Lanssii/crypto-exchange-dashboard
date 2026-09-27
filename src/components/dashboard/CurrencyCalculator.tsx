@@ -61,10 +61,14 @@ export const CurrencyCalculator = ({ assets }: CurrencyCalculatorProps) => {
             <select
               value={fromSymbol}
               onChange={(e) => setFromSymbol(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 bg-gray-50/50 p-2.5 font-mono text-sm font-semibold text-gray-800 outline-none transition-all hover:border-gray-300 focus:border-[#2D122C] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-purple-400"
+              className="w-full rounded-xl border border-gray-200 bg-gray-50/50 p-2.5 font-mono text-sm font-semibold text-gray-800 outline-none transition-all hover:border-gray-300 focus:border-brand-dark dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-purple-400"
             >
               {assets.map((asset) => (
-                <option key={asset.symbol} value={asset.symbol}>
+                <option
+                  key={asset.symbol}
+                  value={asset.symbol}
+                  className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+                >
                   {asset.baseAsset} ({asset.name})
                 </option>
               ))}
@@ -90,7 +94,7 @@ export const CurrencyCalculator = ({ assets }: CurrencyCalculatorProps) => {
             <select
               value={toSymbol}
               onChange={(e) => setToSymbol(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 bg-gray-50/50 p-2.5 font-mono text-sm font-semibold text-gray-800 outline-none transition-all hover:border-gray-300 focus:border-[#2D122C] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-purple-400"
+              className="w-full rounded-xl border border-gray-200 bg-gray-50/50 p-2.5 font-mono text-sm font-semibold text-gray-800 outline-none transition-all hover:border-gray-300 focus:border-brand-dark dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-purple-400"
             >
               {assets.map((asset) => (
                 <option key={asset.symbol} value={asset.symbol}>
@@ -111,12 +115,12 @@ export const CurrencyCalculator = ({ assets }: CurrencyCalculatorProps) => {
             value={amount}
             onChange={handleAmountChange}
             placeholder="Enter amount..."
-            className="w-full rounded-xl border border-gray-200 bg-gray-50/50 p-3 font-mono text-base font-bold text-gray-900 outline-none transition-all focus:border-[#2D122C] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-purple-400"
+            className="w-full rounded-xl border border-gray-200 bg-gray-50/50 p-3 font-mono text-base font-bold text-gray-900 outline-none transition-all focus:border-brand-dark dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-purple-400"
           />
         </div>
 
         {/* Result */}
-        <div className="mt-1 rounded-xl bg-purple-50/40 p-4 border border-purple-100 dark:border-purple-900/30 dark:bg-[#170916]/30 flex flex-col gap-1">
+        <div className="mt-1 rounded-xl bg-brand-light p-4 border border-purple-100 dark:border-purple-900/30 dark:bg-[#170916]/30 flex flex-col gap-1">
           <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
             Result
           </span>
@@ -125,7 +129,7 @@ export const CurrencyCalculator = ({ assets }: CurrencyCalculatorProps) => {
             <span className="text-xs text-gray-500 font-normal">
               {fromAsset?.baseAsset} =
             </span>
-            <span className="text-[#592357] dark:text-purple-300">
+            <span className="text-brand dark:text-purple-300">
               {convertedValue.toLocaleString(undefined, {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 6,

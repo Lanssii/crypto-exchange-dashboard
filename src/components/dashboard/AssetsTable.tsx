@@ -88,9 +88,10 @@ export const AssetsTable = ({
         <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm font-medium">
           <button
             onClick={() => setActiveTab("all")}
+            /* Active Tab Underline */
             className={`transition-colors ${
               activeTab === "all"
-                ? "text-gray-900 font-bold dark:text-white border-b-2 border-[#592357] dark:border-purple-400 pb-0.5"
+                ? "text-gray-900 font-bold dark:text-white border-b-2 border-brand dark:border-purple-400 pb-0.5"
                 : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             }`}
           >
@@ -122,7 +123,7 @@ export const AssetsTable = ({
 
         {/* Sorting Dropdown */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-800 text-xs text-gray-500 font-medium">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-800 text-xs text-gray-500 font-medium ">
             <FiFilter className="text-gray-400" />
             <span>Sort:</span>
             <select
@@ -130,9 +131,24 @@ export const AssetsTable = ({
               onChange={(e) => setSortBy(e.target.value as SortOption)}
               className="bg-transparent font-bold text-gray-800 dark:text-gray-200 outline-none cursor-pointer"
             >
-              <option value="name">Name</option>
-              <option value="price">Price</option>
-              <option value="change">24h Change</option>
+              <option
+                value="name"
+                className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+              >
+                Name
+              </option>
+              <option
+                value="price"
+                className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+              >
+                Price
+              </option>
+              <option
+                value="change"
+                className="bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+              >
+                24h Change
+              </option>
             </select>
           </div>
 

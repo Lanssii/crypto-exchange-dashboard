@@ -41,9 +41,10 @@ export const AssetRow = ({
   return (
     <div
       onClick={() => onSelect(asset.symbol)}
+      /* Selected Row */
       className={`group flex items-center justify-between p-3 sm:p-4 rounded-xl transition-all cursor-pointer border ${
         isSelected
-          ? "bg-purple-50/30 border-[#2D122C]/40 dark:bg-[#170916]/40 dark:border-[#2D122C]/30"
+          ? "bg-brand-light border-brand-dark/40 dark:bg-[#170916]/40 dark:border-brand-dark/30"
           : "bg-white border-gray-100 hover:border-gray-200 dark:bg-gray-900 dark:border-gray-800/60 dark:hover:border-gray-700"
       }`}
     >
