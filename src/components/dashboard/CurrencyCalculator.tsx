@@ -18,12 +18,23 @@ export const CurrencyCalculator = ({ assets }: CurrencyCalculatorProps) => {
   // Calculate live conversion result using real-time WebSocket market prices
   const calculateConversion = () => {
     const numericAmount = parseFloat(amount);
-    if (isNaN(numericAmount) || numericAmount <= 0 || !fromAsset || !toAsset) {
+
+    if (
+      isNaN(numericAmount) ||
+      numericAmount <= 0 ||
+      !fromAsset?.price ||
+      !toAsset?.price
+    ) {
       return 0;
     }
+
+    // TS knows these are numbers
+    const fromPrice = fromAsset.price;
+    const toPrice = toAsset.price;
+
     // (Amount * FromPrice) / ToPrice
-    const totalInUsd = numericAmount * fromAsset.price;
-    const converted = totalInUsd / toAsset.price;
+    const totalInUsd = numericAmount * fromPrice;
+    const converted = totalInUsd / toPrice;
     return converted;
   };
 
