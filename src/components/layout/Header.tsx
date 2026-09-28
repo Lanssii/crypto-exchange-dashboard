@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
 import {
   IoNotificationsOutline,
   IoSunnyOutline,
@@ -59,7 +58,7 @@ const Header = ({
       <div className="max-w-7xl mx-auto w-full flex flex-wrap md:flex-nowrap items-center justify-between py-3 px-5 gap-y-3">
         {/* Logo */}
         <div>
-          <Link to="/" className="flex items-center gap-2.5">
+          <a href="/" className="flex items-center gap-2.5">
             <img
               src="/images/logoIcon.svg"
               alt="KursiCrypto Logo"
@@ -71,7 +70,7 @@ const Header = ({
             <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               KursiCrypto
             </h1>
-          </Link>
+          </a>
         </div>
 
         {/* Action Buttons and Notifications */}

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Header from "./components/layout/Header";
 import { CRYPTO_CONFIG } from "./data/cryptoConfig.ts";
@@ -83,19 +82,13 @@ const App = () => {
         themeToggle={themeToggle}
         theme={theme}
       />
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Home
-              searchQuery={searchQuery}
-              selectedSymbol={selectedSymbol}
-              onSelectSymbol={setSelectedSymbol}
-              onAddNotification={handleAddNotification}
-            />
-          }
-        />
-      </Routes>
+
+      <Home
+        searchQuery={searchQuery}
+        selectedSymbol={selectedSymbol}
+        onSelectSymbol={setSelectedSymbol}
+        onAddNotification={handleAddNotification}
+      />
     </div>
   );
 };
