@@ -671,11 +671,8 @@ crypto-exchange-dashboard/
 - **Tailwind CSS v4**
 - **Binance WebSocket API**
 - **Recharts**
-- **React Router**
 - **React Icons**
 - **ESLint**
-
-The current project dependencies use React 19 and React Router 7.
 
 ---
 

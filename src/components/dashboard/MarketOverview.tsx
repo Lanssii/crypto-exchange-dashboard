@@ -29,11 +29,22 @@ export const MarketOverview = ({ asset, history }: MarketOverviewProps) => {
   const strokeColor = isPositive ? "#22c55e" : "#ef4444";
   const gradientId = `price-gradient-${asset.symbol}`;
 
-  const chartData = history.map((price, index) => ({
-    timeLabel: `Tick ${index + 1}`,
-    price,
-  }));
-  // Fallback to null if history is empty and price is not loaded yetы
+  const chartData = history.map((price, index) => {
+    const now = new Date();
+    const timeOffset = (history.length - 1 - index) * 3;
+    const tickTime = new Date(now.getTime() - timeOffset * 1000);
+    const timeFormatted = tickTime.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+
+    return {
+      timeLabel: timeFormatted,
+      price,
+    };
+  });
+
   const sessionHigh = history.length ? Math.max(...history) : asset.price;
   const sessionLow = history.length ? Math.min(...history) : asset.price;
 
@@ -214,7 +225,7 @@ export const MarketOverview = ({ asset, history }: MarketOverviewProps) => {
           </ResponsiveContainer>
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-gray-200 bg-gray-50/50 text-xs text-gray-400 dark:border-gray-800 dark:bg-gray-900/50">
-            <span className="text-lg">Loading...</span>
+            <span className="text-lg font-semibold">Loading...</span>
             <span>Collecting live WebSocket ticks from Binance...</span>
           </div>
         )}
