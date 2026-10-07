@@ -37,7 +37,7 @@ export const useBinanceWebSocket = (
   const reconnectTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
+    let isMounted = true; // If user closes the page or navigates to another one, the flag will become false, and the code will stop updating the states
 
     const connect = () => {
       const streams = initialAssets
@@ -45,13 +45,13 @@ export const useBinanceWebSocket = (
         .join("/");
 
       // WebSocket API URL
-      const wsUrl = `wss://stream.binance.com:9443/ws/${streams}`;
+      const wsUrl = `wss://stream.binance.com:9443/ws/${streams}`; // /btcusdt@ticker/ethusdt@ticker
 
       if (isMounted) {
         setConnectionStatus("RECONNECTING");
       }
 
-      const ws = new WebSocket(wsUrl);
+      const ws = new WebSocket(wsUrl); // object is created and the status changes to CONNECTED
       socketRef.current = ws;
 
       ws.onopen = () => {
@@ -59,12 +59,13 @@ export const useBinanceWebSocket = (
       };
 
       ws.onmessage = (event) => {
+        // This function triggers as soon as Binance sends a new price
         if (!isMounted) return;
 
         try {
           const data = JSON.parse(event.data);
           const symbol = data.s;
-          const currentPrice = parseFloat(data.c);
+          const currentPrice = parseFloat(data.c); // Converts a string to a floating-point number
           const change24h = parseFloat(data.P);
 
           if (!symbol || isNaN(currentPrice)) return;
@@ -75,7 +76,7 @@ export const useBinanceWebSocket = (
             setInitialPrices((prev) => ({ ...prev, [symbol]: currentPrice }));
           }
 
-          // Atomically update history in ref
+          // Atomically update history in ref - price saves in price history array
           const currentHistory = priceHistoryRef.current[symbol] || [];
           const updatedHistory = [...currentHistory, currentPrice].slice(-20);
           priceHistoryRef.current[symbol] = updatedHistory;
@@ -137,7 +138,7 @@ export const useBinanceWebSocket = (
       }
       if (socketRef.current) {
         socketRef.current.close();
-      }
+      } // When the component is destroyed, the return function executes. it closes the WebSocket so the connection doesn't remain in the browser's memory
     };
   }, []);
 

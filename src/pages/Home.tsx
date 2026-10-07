@@ -77,9 +77,9 @@ const Home = ({
 
     return (
       <div
-        className={`inline-flex items-center gap-2 px-1 py-1 text-xs font-semibold ${config.textColor}`}
+        className={`flex items-center justify-center gap-1 text-xs font-medium ${config.textColor}`}
       >
-        <span className={`h-2 w-2 rounded-full ${config.dotColor}`} />
+        <span className={`h-1.5 w-1.5 rounded-full ${config.dotColor}`} />
         <span>{config.text}</span>
       </div>
     );
@@ -87,20 +87,22 @@ const Home = ({
 
   return (
     <main className="max-w-7xl mx-auto px-4 py-6 flex flex-col gap-6">
-      {/* Status Bar */}
-      <div className="flex items-center justify-between px-1">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-          Dashboard
-        </h1>
-        <div>{renderConnectionBadge()}</div>
-      </div>
+      <div className="flex items-center justify-between gap-4 pb-2">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
+            Dashboard
+          </h1>
+          <div className="flex items-center">{renderConnectionBadge()}</div>
+        </div>
 
-      {/* 2% Price Alerts Container */}
-      <PriceAlerts
-        assets={assets}
-        initialPrices={initialPrices}
-        onAddNotification={onAddNotification}
-      />
+        <div className="flex items-center justify-end">
+          <PriceAlerts
+            assets={assets}
+            initialPrices={initialPrices}
+            onAddNotification={onAddNotification}
+          />
+        </div>
+      </div>
 
       {/* Graph and Calculator */}
       <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-6 items-stretch">

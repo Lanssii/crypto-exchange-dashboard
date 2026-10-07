@@ -160,6 +160,12 @@ src/
 └── main.tsx
 ```
 
+## Code Documentation & Developer Notes
+
+Throughout the codebase, key hooks and UI components include clear, inline notes explaining data flow, state synchronization, and complex React patterns (such as ref-based threshold tracking and WebSocket cleanup).
+
+These comments served as intentional learning checkpoints during development and remain in the project as technical documentation, making the architecture easier to audit, maintain, and expand with new features in the future.
+
 # 5. WebSocket Architecture
 
 The main real-time logic is isolated inside:
@@ -260,49 +266,15 @@ running after the component that owns it has been removed.
 
 ---
 
-# 7. Initial Price and 2% Alert Logic
+## 7. Dynamic Alert Threshold & User Preferences
 
-One of the most important requirements was to compare every cryptocurrency against its
-first received price after the session starts.
+Instead of relying solely on a fixed 2% change, the alert system features a dynamic threshold selector.
 
-I store these values separately from the current prices:
+Users can choose their preferred sensitivity threshold (`0.1%`, `0.5%`, `1.0%`, `2.0%`, or `5.0%`). When a user updates the threshold:
 
-```text
-initialPrices
-```
-
-The first valid WebSocket price for an asset becomes its session baseline.
-
-For every subsequent price:
-
-```text
-percentage change =
-(current price - initial price) / initial price × 100
-```
-
-The absolute value is then compared with the 2% threshold.
-
-For example:
-
-```text
-Initial BTC price: 84,000
-Current BTC price: 85,680
-
-Change:
-(85,680 - 84,000) / 84,000 × 100
-= +2%
-```
-
-If the absolute movement reaches 2% or more, an alert is generated.
-
-Additionally, inside PriceAlerts.tsx you will find:
-
-/_ UNCOMMENT THESE PARTS TO SEE HOW THESE NOTIFICATIONS WORK
-Not to wait untill 2% changes, for technical interview Demo
-_/
-
-This test button was added to let you see exactly how the application tracks and displays notifications in real time,
-without having to wait for an actual 2% price change.
+- the baseline comparison dynamically recalculates against the chosen value;
+- trigger tracking states are cleanly reset to prevent stale notifications;
+- toasts and notification history instantly respect the newly selected precision level.
 
 ---
 

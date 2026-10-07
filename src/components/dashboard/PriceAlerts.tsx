@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { CryptoAsset } from "../../types/crypto";
 import { IoClose } from "react-icons/io5";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 type AlertMessage = {
   id: string;
@@ -31,11 +32,8 @@ const ToastItem = ({
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // entry animation
     const showTimer = requestAnimationFrame(() => setIsVisible(true));
-    // exit animation at 4.6s
     const hideTimer = setTimeout(() => setIsVisible(false), 4600);
-    // Unmount from state at 5s
     const dismissTimer = setTimeout(() => onDismiss(alert.id), 5000);
 
     return () => {
@@ -80,7 +78,7 @@ const ToastItem = ({
       <button
         onClick={handleManualClose}
         className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 transition-colors cursor-pointer flex-shrink-0"
-        title="Close"
+        title="Close notification"
       >
         <IoClose className="w-4 h-4" />
       </button>
@@ -95,6 +93,7 @@ export const PriceAlerts = ({
 }: PriceAlertsProps) => {
   const [alerts, setAlerts] = useState<AlertMessage[]>([]);
   const triggeredAlertsRef = useRef<Record<string, boolean>>({});
+  const [alertPercent, setAlertPercent] = useLocalStorage<number>("alerts", 2);
 
   const pushAlert = (newAlert: AlertMessage) => {
     setAlerts((prev) => [newAlert, ...prev.slice(0, 3)]);
@@ -120,7 +119,7 @@ export const PriceAlerts = ({
 
       const hasTriggered = triggeredAlertsRef.current[asset.symbol];
 
-      if (absChange >= 2.0) {
+      if (absChange >= alertPercent) {
         if (!hasTriggered) {
           triggeredAlertsRef.current[asset.symbol] = true;
 
@@ -139,42 +138,49 @@ export const PriceAlerts = ({
         }
       }
     });
-  }, [assets, initialPrices]);
+  }, [assets, initialPrices, alertPercent]);
 
   const dismissAlert = (id: string) => {
     setAlerts((prev) => prev.filter((a) => a.id !== id));
   };
 
-  /* UNCOMMENT THESE PARTS TO SEE HOW THESE NOTIFICATIONS WORK
-     Not to wait untill 2% changes, for technical interview Demo
-  */
-  /* const triggerMockAlert = () => {
-    const isUp = Math.random() > 0.5;
-    const mockPercent = parseFloat((2.15 + Math.random() * 1.2).toFixed(2));
-
-    const testAlert: AlertMessage = {
-      id: `test-${Date.now()}`,
-      symbol: "BTCUSDT",
-      percentChange: mockPercent,
-      direction: isUp ? "increased" : "decreased",
-    };
-
-    pushAlert(testAlert);
-  }; */
-
   return (
     <>
-      {/* 
-      DEMO BUTTON
-       */}
-      {/* <div className="flex justify-end mb-2">
-        <button
-          onClick={triggerMockAlert}
-          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-purple-100 hover:bg-purple-200 text-[#592357] dark:bg-purple-950/60 dark:text-purple-300 font-semibold text-xs transition-all cursor-pointer"
+      {/* Selector for price % change */}
+      <div
+        className="flex items-center justify-end gap-2 px-1 text-xs sm:text-sm"
+        title="Choose price change threshold to trigger notifications"
+      >
+        <span className="hidden sm:inline font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
+          Notify on:
+        </span>
+
+        <select
+          value={alertPercent}
+          onChange={(e) => {
+            setAlertPercent(Number(e.target.value));
+            triggeredAlertsRef.current = {};
+          }}
+          aria-label="Select price change alert threshold"
+          className="font-semibold text-gray-800 dark:text-gray-100 focus:outline-none cursor-pointer pr-1"
         >
-          <span>Test 2% Alert Visual</span>
-        </button>
-      </div> */}
+          <option value={0.01} className="dark:bg-gray-900">
+            0.01%
+          </option>
+          <option value={0.5} className="dark:bg-gray-900">
+            0.5%
+          </option>
+          <option value={1} className="dark:bg-gray-900">
+            1.0%
+          </option>
+          <option value={2} className="dark:bg-gray-900">
+            2.0%
+          </option>
+          <option value={5} className="dark:bg-gray-900">
+            5.0%
+          </option>
+        </select>
+      </div>
 
       {/* Floating Bottom-Right Toast Container */}
       <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm w-full px-4 pointer-events-none">
